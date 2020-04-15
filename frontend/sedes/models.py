@@ -1,4 +1,11 @@
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import PermissionsMixin
+from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
+from django.core.validators import MaxValueValidator, MinValueValidator
+
+from .managers import CustomUserManager
 
 # Create your models here.
 
@@ -13,15 +20,46 @@ class Sede(models.Model):
     def __str__(self):
         return self.alias
 
-class Usuario(models.Model):
-    dpi = models.CharField(max_length= 100, primary_key= True)
-    nombre = models.CharField(max_length= 200)
+class Usuario(AbstractBaseUser, PermissionsMixin):
+    dpi = models.BigIntegerField(
+        unique= True, 
+        validators=[
+            MaxValueValidator(9999999999999),
+         
+            MinValueValidator(100000000000)
+        ]
+    )
+
+    nombre = models.CharField(max_length= 100)
     fecha_nacimiento = models.DateField('Fecha Nacimiento')
-    correo = models.CharField(max_length= 50)
-    password = models.CharField(max_length= 30)
-    
+    email = models.EmailField(_('Correo Electronico'), primary_key= True)
+
+    is_admin = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+
+    date_joined = models.DateTimeField(default= timezone.now)
+        
+    #groups = models.ManyToManyField(blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', related_name='usuario_set', related_query_name='user', to='auth.Group', verbose_name='groups')
+    #user_permissions = models.ManyToManyField(blank=True, help_text='Specific permissions for this user.', related_name='usuario_set', related_query_name='user', to='auth.Permission', verbose_name='user permissions')
+            
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['dpi', 'fecha_nacimiento']
+
+    objects = CustomUserManager()
+
     def __str__(self):
-        return self.dpi + " " + self.correo
+        return self.email
+
+    def has_perm(self, perm, obj=None):
+        "Does the user have a specific permission?"
+        # Simplest possible answer: Yes, always
+        return True
+
+    def has_module_perms(self, app_label):
+        "Does the user have permissions to view the app `app_label`?"
+        # Simplest possible answer: Yes, always
+        return True
 
 class Rol(models.Model):
     VENDEDOR = 'VE'
