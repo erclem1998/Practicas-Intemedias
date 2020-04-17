@@ -16,8 +16,6 @@ from django.urls import reverse
 # CRUD de los usuarios
 
 # ver el perfil de usuario en el que esta actualmente autenticado el usuario
-
-
 class UsuarioDetail(LoginRequiredMixin, DetailView):
     model = Usuario
 
@@ -48,9 +46,7 @@ class UsuarioUpdate(LoginRequiredMixin, UpdateView):
 # CRUD del modelo SEDES
 # Accesible para todos los usuarios autenticados
 
-# Ver todas las sedes disponibles
-
-
+# Esta clase sirve para asignarle una clase CSS a cada uno de los campos en un form
 class SedeModelForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -65,19 +61,15 @@ class SedeModelForm(ModelForm):
         model = Sede
         fields = '__all__'
 
-
+# Ver todas las sedes disponibles
 class SedeList(LoginRequiredMixin, ListView):
     model = Sede
 
 # Ver una sede en especifico
-
-
 class SedeDetail(DetailView):
     model = Sede
 
 # Crear sedes (esta funcion es unicamente para encargados de sede)
-
-
 class SedeCreate(CreateView):
     form_class = SedeModelForm
     model = Sede
@@ -87,8 +79,6 @@ class SedeCreate(CreateView):
         return reverse('lista_sedes')
 
 # Modificar sedes (esta funcion es unicamente para encargados de sede)
-
-
 class SedeUpdate(UpdateView):
     model = Sede
     form_class = SedeModelForm
@@ -98,11 +88,11 @@ class SedeUpdate(UpdateView):
         return reverse('lista_sedes')
 
 # Eliminar una sede (esta funcion es unicamente para encargados de sede)
-
-
 class SedeDelete(DeleteView):
     model = Sede
     
     # Redirigir al usuario a su perfil
     def get_success_url(self):
         return reverse('lista_sedes')
+
+# Otras vistas iran aca...

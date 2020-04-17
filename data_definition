@@ -6,7 +6,6 @@ SEDES (CRUD)
 	encargado
 	numero de bodegas
 	
-	
 EncargadoSede
 	CantidadBodegas
 	

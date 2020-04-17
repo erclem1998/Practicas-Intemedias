@@ -22,6 +22,5 @@ urlpatterns = [
     path('', include('sedes.urls')),
     path('admin/', admin.site.urls),
     url('accounts/login/', auth_views.LoginView.as_view(redirect_authenticated_user=True), name='login'),
-    #Todo: Register url('accounts/register/', , name='register'),
     url('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
 ]

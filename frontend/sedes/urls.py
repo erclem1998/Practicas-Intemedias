@@ -15,11 +15,6 @@ urlpatterns = [
     path('sedes/modificar/<int:pk>', views.SedeUpdate.as_view(), name='modificar_sede'),
     path('sedes/eliminar/<int:pk>', views.SedeDelete.as_view(), name='eliminar_sede'),
 
-    #bodega
-
-    #productos
-
-    #categorias
-    
+    #Otros URLS de vistas   
 ]
 
