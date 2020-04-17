@@ -1,0 +1,18 @@
+<!-- Esta vista muestra un formulario con los datos del usuario (actual) y deja modificarlos -->
+
+{% extends '../base.html' %}
+{% block body_block %}
+
+{% if object.alias %}
+<h1>Modificar &quot;{{ object.alias }}&quot;</h1>
+{% else %}
+
+<h1>Crear una sede</h1>
+{% endif %}
+<form  method="post">
+{% csrf_token %}
+{{ form.as_p }}
+<input  type="submit"  value="Modificar mi perfil"  />
+</form>
+
+{% endblock %}

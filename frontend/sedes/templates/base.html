@@ -1,0 +1,104 @@
+{% load group_checker %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Practicas Intermedias</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.5.0.min.js"
+        integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
+        integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-inverse navbar-static-top">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Ver</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Practicas Intermedias</a>
+        </div>
+
+        <div class="container">
+            <ul class="nav navbar-nav">
+                {% if user.is_authenticated %}
+
+                {% if user.is_staff %}
+                <li><a class="navbar-link" href="{% url 'admin:index' %}"><span
+                            class="glyphicon glyphicon-user">&nbsp;</span>Administrar</a></li>
+                {% endif %}
+
+                <li ><a class='navbar-link' href="{% url 'lista_sedes' %}">Sedes</a></li>
+
+                {% if request.user|has_group:"Vendedor" %}
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                        aria-expanded="false">Vendedor <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Clientes</a></li>
+                        <li><a href="#">Ventas</a></li>
+                        <li><a href="#">Facturas</a></li>
+                        <li><a href="#">Reportes</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+
+                {% if request.user|has_group:"Bodeguero" %}
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                        aria-expanded="false">Bodeguero <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Inventario</a></li>
+                        <li><a href="#">Transferencias</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+
+
+                {% if request.user|has_group:"Repartidor" %}
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                        aria-expanded="false">Repartidor <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Transferencias</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+
+                {% endif %}
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+
+                <li><a class="navbar-link" href="/"><span class="glyphicon glyphicon-user">&nbsp;</span>
+                        {{ user.email }}</a></li>
+                <li ><a class='navbar-link' href="{% url 'logout' %}">Salir</a></li>
+
+                {% else %}
+
+                <li><a class='navbar-link' href="{% url 'login' %}">Registrarse</a></li>
+                <li><a class='navbar-link' href="{% url 'login' %}">Iniciar Sesión</a></li>
+
+                {% endif %}
+
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        {% block body_block %}
+        {% endblock %}
+    </div>
+</body>
+
+</html>

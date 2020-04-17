@@ -1,0 +1,16 @@
+<!-- Esta vista muestra una confirmacion si se desea eliminar una sede -->
+
+{% extends '../base.html' %}
+{% block body_block %}
+
+<h1>Eliminar &quot;{{ object.alias }}&quot;</h1>
+<form method="post">
+    {% csrf_token %}
+    <p>
+        <strong>¿Estas seguro que deseas eliminar esta sede?</strong>
+    </p>
+    <br>
+    <input class="btn btn-danger" type="submit" value="Confirmar" />
+</form>
+
+{% endblock %}

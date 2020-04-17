@@ -1,0 +1,137 @@
+SEDES (CRUD)
+	alias
+	direccion
+	departamento
+	municipio
+	encargado
+	numero de bodegas
+	
+EncargadoSede
+	CantidadBodegas
+	
+	-- Crear usuarios que operan la app
+	
+Rol
+	Valores:
+		Vendedor
+		Bodeguero
+		Repartidor
+		Encargado
+	
+Usuario
+	dpi
+	nombre
+	fecha de nacimiento
+	correo
+	contraseña
+
+RolUsuario
+	Usuario
+	Rol
+	
+Permiso
+	Valores:
+		Registrar Cliente
+		Regristrar Venta
+		Visualizar Reporte
+		Actualizar Inventario
+		Solicitar Transferencia
+		Visualizar/Aceptar ordenes de transferencia externa
+		Visualizar/Aceptar ordenes de transferencia interna
+		Ordenes de venta
+		Ordenes de transferencia
+	
+PermisoRol
+	Permiso
+	Rol
+
+Bodega
+	nombre
+	direccion
+	estado
+		activo
+		inactivo
+	encargado (Usuario)
+	
+Producto
+	SKU
+	Codigo barras
+	Nombre
+	Descripcion
+	Precio
+	
+Categoria
+	nombre de categoria
+	
+ProductoCategoria
+	Producto
+	Categoria
+	
+Cliente
+	Nombre
+	Nit
+	DPI
+	Direccion
+	
+ClienteSede
+	Cliente
+	Sede
+	
+Venta
+	Cliente
+	Vendedor
+	Fecha facturacion
+	a domicilio
+		verdadero
+		falso
+	descuento
+	
+VentaRepartidor
+	Usuario (con rol repartidor)
+	Venta
+	Fecha entrega
+	
+ProductoVenta
+	Producto
+	Venta
+	Cantidad
+	
+Factura
+	Venta
+	SubTotal
+	Recargo
+	Total
+	
+LogActualizacionInventario
+	Producto
+	Cantidad antigua
+	Cantidad nueva
+	Motivo
+	Usuario (Bodeguero)
+	Fecha
+	
+
+SolicitudTransferencia
+	Tipo
+		Interna
+		Externa
+	Bodega
+	Usuario (Bodeguero)
+	Estado
+		Aceptado
+		No Aceptado
+	
+SolicitudTransferenciaProducto
+	SolicitudTransferencia
+	Producto
+	Cantidad
+	
+
+	
+
+
+
+
+
+		
+
