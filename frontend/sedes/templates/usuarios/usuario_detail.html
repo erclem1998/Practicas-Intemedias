@@ -1,9 +1,29 @@
-<h1>{{ object.name }}</h1>
+<!-- Esta vista muestra el perfil de los datos de un usuario -->
 
-<p>Direccion: {{object.dpi}}</p>
-<p>Departamento: {{object.correo}}</p>
-<p>Municipio: {{object.fecha_nacimiento}}</p>
+{% extends '../base.html' %}
+{% block body_block %}
 
-<!-- Por hacer: mostrar permisos de los usuarios -->
-<p>Encargado: {{object.encargado}}</p>
-<p># de bodegas: {{object.numero_bodegas}}</p>
+<h1>{{ object.nombre }}</h1>
+
+<p>DPI: {{object.dpi}}</p>
+<p>Correo: <a href='mailto://{{object.email}}'>{{ object.email }}</a></p>
+<p>Fecha de Nacimiento: {{object.fecha_nacimiento}}</p>
+
+<a href='{% url "modificar_usuario" %}'>Modificar mis datos</a>
+
+<h2>Grupos y permisos</h2>
+
+<ul>
+    {% for group in object.groups.all %}
+    <li>
+        {{ group.name }} 
+        <ul>
+            {% for permission in group.permissions.all %}
+            <li> {{ permission.name }}</li>
+            {% endfor %}
+        </ul>
+    </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

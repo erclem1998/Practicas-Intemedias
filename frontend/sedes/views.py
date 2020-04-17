@@ -3,87 +3,106 @@ from django.http import HttpResponse
 from django.template import loader
 from .models import *
 
-from django.views.generic import ListView, DetailView 
+from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.contrib.auth.mixins import PermissionRequiredMixin
 
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.forms import ModelForm
+
+from django.urls import reverse
 
 # CRUD de los usuarios
-class UsuarioList(LoginRequiredMixin, ListView): 
-    model = Usuario
-    raise_exception = True  # Raise exception when no access instead of redirect
-    permission_denied_message = "You are not allowed here."
 
-class UsuarioDetail(DetailView): 
+# ver el perfil de usuario en el que esta actualmente autenticado el usuario
+
+
+class UsuarioDetail(LoginRequiredMixin, DetailView):
     model = Usuario
 
-class UsuarioCreate(UserPassesTestMixin, CreateView): 
-    model = Usuario
-    fields = '__all__'
+    # en vez de utilizar la llave primaria enviada por default a esta vista,
+    # se utiliza el usuario en el request
+    def get_object(self, queryset=None):
+        dpi = self.kwargs.get('pk')
+        if dpi:
+            return get_object_or_404(Usuario, dpi=dpi)
+        return self.request.user
 
-    def test_func(self):
-        return self.request.user.is_superuser
+# modificar el perfil de usuario en el que esta actualmente autenticado el usuario
 
-class UsuarioUpdate(UpdateView): 
+
+class UsuarioUpdate(LoginRequiredMixin, UpdateView):
     model = Usuario
-    fields = '__all__'
+    fields = ['dpi', 'fecha_nacimiento']
+
+    # en vez de utilizar la llave primaria enviada por default a esta vista,
+    # se utiliza el usuario en el request
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    # Redirigir al usuario a su perfil
+    def get_success_url(self):
+        return '/'
+
+# CRUD del modelo SEDES
+# Accesible para todos los usuarios autenticados
+
+# Ver todas las sedes disponibles
+
+
+class SedeModelForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(SedeModelForm, self).__init__(*args, **kwargs)
+
+        for field in self.fields:
+            self.fields[field].widget.attrs = {
+                'class': 'form-control'
+            }
+
+    class Meta:
+        model = Sede
+        fields = '__all__'
+
+
+class SedeList(LoginRequiredMixin, ListView):
+    model = Sede
+
+# Ver una sede en especifico
+
+
+class SedeDetail(DetailView):
+    model = Sede
+
+# Crear sedes (esta funcion es unicamente para encargados de sede)
+
+
+class SedeCreate(CreateView):
+    form_class = SedeModelForm
+    model = Sede
     
-    def test_func(self):
-        return self.request.user.is_superuser
+    # Redirigir al usuario a su perfil
+    def get_success_url(self):
+        return reverse('lista_sedes')
 
-class UsuarioDelete(DeleteView): 
-    model = Usuario
+# Modificar sedes (esta funcion es unicamente para encargados de sede)
 
 
-# CRUD del modelo SEDES 
-# Accesible para todos los usuarios autenticados 
-
-class SedeList(LoginRequiredMixin, ListView): 
+class SedeUpdate(UpdateView):
     model = Sede
-    raise_exception = True  # Raise exception when no access instead of redirect
-    permission_denied_message = "You are not allowed here."
-
-class SedeDetail(DetailView): 
-    model = Sede
-
-class SedeCreate(UserPassesTestMixin, CreateView): 
-    model = Sede
-    fields = '__all__'
-
-    def test_func(self):
-        return self.request.user.is_superuser
-
-class SedeUpdate(UpdateView): 
-    model = Sede
-    fields = '__all__'
+    form_class = SedeModelForm
     
-    def test_func(self):
-        return self.request.user.is_superuser
+    # Redirigir al usuario a su perfil
+    def get_success_url(self):
+        return reverse('lista_sedes')
 
-class SedeDelete(DeleteView): 
+# Eliminar una sede (esta funcion es unicamente para encargados de sede)
+
+
+class SedeDelete(DeleteView):
     model = Sede
-
-"""
-# Vista general de todas las sedes que hay
-def index(request):
-    sedes_list = Sede.objects.order_by('alias')
-    template = loader.get_template('sedes/index.html')
-    context = {
-        'sedes_list': sedes_list,
-    }
-
-    return HttpResponse(template.render(context, request))
     
-# Detalle de una sede en especifico
-def detail(request, sedes_id):
-    sede = get_object_or_404(Sede, pk= sedes_id)
-    return render(request, 'sedes/detail.html', {'sede': sede})
-
-# Agregar una sede
-def bodegas(request):
-    return render('')
-
-    """
-
+    # Redirigir al usuario a su perfil
+    def get_success_url(self):
+        return reverse('lista_sedes')

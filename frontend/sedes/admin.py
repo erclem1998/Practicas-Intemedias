@@ -53,37 +53,9 @@ class UserCreationForm(forms.ModelForm):
 # para modificar un usuario se requerira 
 class UserChangeForm(forms.ModelForm):
 
-    password1 = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Confirmacion contraseña', widget=forms.PasswordInput)
-
     class Meta:
         model = Usuario
-        fields = ('nombre', 'email', 'password', 'dpi', 'fecha_nacimiento', 'is_active', 'is_admin')
-
-    def clean_password2(self):
-        # Check that the two password entries match
-        password1 = self.cleaned_data.get("password1")
-        password2 = self.cleaned_data.get("password2")
-
-        if (not password1 or not password2):
-            return None
-
-        if password1 and password2 and password1 != password2:
-            raise forms.ValidationError("Las contrasenas ingresadas no coincidieron")
-        return password2
-
-    def save(self, commit=True):
-        # Save the provided password in hashed format
-        user = super().save(commit=False)
-
-        pwd = self.cleaned_data["password1"]
-        if (pwd):
-            user.set_password()
-
-        if commit:
-            user.save()
-
-        return user
+        fields = ('nombre', 'email', 'dpi', 'fecha_nacimiento', 'is_active', 'is_admin')
 
 # El nuevo formulario del usuario
 class UserAdmin(BaseUserAdmin):
@@ -97,7 +69,7 @@ class UserAdmin(BaseUserAdmin):
     list_display = ('email', 'dpi', 'nombre', 'fecha_nacimiento', 'is_staff', 'is_superuser', 'is_active')
     list_filter = ('is_superuser', 'is_active', 'is_staff')
     fieldsets = (
-        ('Credenciales', {'fields': ('email', 'dpi', 'password1', 'password2')}),
+        ('Credenciales', {'fields': ('email', 'dpi')}),
         ('Informacion Personal', {'fields': ('nombre', 'fecha_nacimiento',)}),
         ('Tipo de Usuario', {'fields': ('is_superuser', 'is_staff', 'is_active')}),
         ('Roles y permisos del Usuario', {'fields': ('groups', )}),

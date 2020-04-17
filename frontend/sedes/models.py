@@ -57,7 +57,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 
 # Sedes que contienen bodegas este es el modelo principal de la app
 class Sede(models.Model):
-    alias = models.CharField(max_length=200)
+    alias = models.CharField(max_length=200, unique= True)
     direccion = models.CharField(max_length=500)
     departamento = models.CharField(max_length=50)
     municipio = models.CharField(max_length=50)

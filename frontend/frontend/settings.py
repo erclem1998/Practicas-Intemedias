@@ -123,4 +123,6 @@ STATIC_URL = '/static/'
 # Utilizar el modelo del usuario 
 AUTH_USER_MODEL = 'sedes.Usuario'
 
+LOGIN_REDIRECT_URL = '/'
+
 LOGOUT_REDIRECT_URL = 'login'
