@@ -15,6 +15,26 @@ from django.urls import reverse
 
 # CRUD de los usuarios
 
+class UsuarioModelForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(UsuarioModelForm, self).__init__(*args, **kwargs)
+
+        for field in self.fields:
+            self.fields[field].widget.attrs = {
+                'class': 'form-control'
+            }
+    class Meta:
+        model = Usuario
+        fields = ['dpi', 'nombre', 'fecha_nacimiento', 'email', 'password']
+
+class UsuarioCreate(CreateView):
+    form_class = UsuarioModelForm
+    model = Usuario
+    
+    # Redirigir registro al start
+    def get_success_url(self):
+        return reverse('profile')
+
 # ver el perfil de usuario en el que esta actualmente autenticado el usuario
 class UsuarioDetail(LoginRequiredMixin, DetailView):
     model = Usuario

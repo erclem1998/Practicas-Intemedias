@@ -7,6 +7,7 @@ urlpatterns = [
     path('', views.UsuarioDetail.as_view(template_name= 'usuarios/usuario_detail.html'), name= 'profile'),
     path('usuario/modificar', views.UsuarioUpdate.as_view(template_name= 'usuarios/usuario_form.html'), name= 'modificar_usuario'),
     path('usuario/<int:pk>', views.UsuarioDetail.as_view(template_name= 'usuarios/usuario_detail.html'), name= 'ver_usuario'),
+    path('usuario/crear', views.UsuarioCreate.as_view(template_name= 'usuarios/registro.html'), name= 'crear_usuario'),
     
     #sedes
     path('sedes', views.SedeList.as_view(), name='lista_sedes'),
