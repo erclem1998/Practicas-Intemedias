@@ -3,13 +3,21 @@
 {% extends '../base.html' %}
 {% block body_block %}
 
-<h1>{{ object.alias }}</h1>
+<h1>{{ object.nombre }}</h1>
 
-<p>Direccion: {{object.direccion}}</p>
-<p>Departamento: {{object.departamento}}</p>
-<p>Municipio: {{object.municipio}}</p>
-<p>Encargado: <a href='{% url "ver_usuario" object.encargado.dpi %}'>{{ object.encargado.email }}</a></p>
-<p># de bodegas: {{object.numero_bodegas}}</p>
+<hr>
+
+<p><h4>Codigo de Barras</h4>{{ object.codigo_barras }}</p><br>
+<p><h4>Descripcion</h4>{{ object.descripcion }}</p><br>
+<p><h4>Precio</h4>{{ object.precio }}</a></p><br>
+        <h4>Categorias</h4><p> 
+            {% for categoria in object.categorias.all %}
+                {{ categoria.nombre }}<br>
+            {% endfor %} 
+        </p><br>
+
+        <a class="btn btn-success" href="{% url "lista_productos" %}">Regresar</a>
+
 
 <!-- Por hacer: detalle de encargado y de bodegas -->
 

@@ -3,11 +3,11 @@
 {% extends '../base.html' %}
 {% block body_block %}
 
-<h1>Eliminar &quot;{{ object.alias }}&quot;</h1>
+<h1>Eliminar &quot;{{ object.nombre }}&quot;</h1>
 <form method="post">
     {% csrf_token %}
     <p>
-        <strong>¿Estas seguro que deseas eliminar esta sede?</strong>
+        <strong>¿Estas seguro que deseas eliminar este producto?</strong>
     </p>
     <br>
     <input class="btn btn-danger" type="submit" value="Confirmar" />

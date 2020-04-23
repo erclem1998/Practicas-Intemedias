@@ -115,4 +115,58 @@ class SedeDelete(DeleteView):
     def get_success_url(self):
         return reverse('lista_sedes')
 
+#Vista Productos
+class ProductoModelForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(ProductoModelForm, self).__init__(*args, **kwargs)
+
+        for field in self.fields:
+            self.fields[field].widget.attrs = {
+                'class': 'form-control'
+            }
+
+    class Meta:
+        model = Producto
+        fields = '__all__'
+
+# Ver todas los productos disponibles
+class ProductoList(ListView):
+    model = Producto
+    template_name='productos/producto_list.html'
+
+# Ver un producto en especifico
+class ProductoDetail(DetailView):
+    model = Producto
+    template_name='productos/producto_detail.html'
+
+# Crear Producto 
+class ProductoCreate(CreateView):
+    form_class = ProductoModelForm
+    model = Producto
+    template_name='productos/producto_form.html'
+    
+    # Redirigir al listado de productos
+    def get_success_url(self):
+        return reverse('lista_productos')
+
+# Modificar Producto 
+class ProductoUpdate(UpdateView):
+    model = Producto
+    form_class = ProductoModelForm
+    template_name='productos/producto_form.html'
+    
+    # Redirigir al listado de productos
+    def get_success_url(self):
+        return reverse('lista_productos')
+
+# Eliminar un producto
+class ProductoDelete(DeleteView):
+    model = Producto
+    template_name='productos/producto_confirm_delete.html'
+    
+    # Redirigir al listado de productos
+    def get_success_url(self):
+        return reverse('lista_productos')
+
 # Otras vistas iran aca...
