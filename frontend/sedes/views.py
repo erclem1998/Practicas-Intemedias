@@ -224,3 +224,59 @@ class BodegaDelete(DeleteView):
         return reverse('lista_bodegas')
 
 # Otras vistas iran aca...
+
+#--------------------------------------------------------------------------
+#Vista Categorias
+class CategoriasModelForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(CategoriasModelForm, self).__init__(*args, **kwargs)
+
+        for field in self.fields:
+            self.fields[field].widget.attrs = {
+                'class': 'form-control'
+            }
+
+    class Meta:
+        model = Categoria
+        fields = '__all__'
+
+# Ver todas los Categorias disponibles
+class CategoriaList(ListView):
+    model = Categoria
+    template_name='categorias/categorias_list.html'
+
+
+# Ver un Categoria en especifico
+class CategoriaDetail(DetailView):
+    model = Categoria
+    template_name='categorias/categorias_detail.html'
+
+# Crear Categoria 
+class CategoriaCreate(CreateView):
+    form_class = CategoriasModelForm
+    model = Categoria
+    template_name='categorias/categorias_form.html'
+    
+    # Redirigir al listado de Categoria
+    def get_success_url(self):
+        return reverse('lista_categorias')
+
+# Eliminar una categoria
+class CategoriaDelete(DeleteView):
+    model = Categoria
+    template_name='categorias/categorias_confirm_delete.html'
+    
+    # Redirigir al listado de Bodegas
+    def get_success_url(self):
+        return reverse('lista_categorias')
+
+# Modificar Categoria 
+class CategoriaUpdate(UpdateView):
+    model = Categoria
+    form_class = CategoriasModelForm
+    template_name='categorias/categorias_form.html'
+    
+    # Redirigir al listado de Bodegas
+    def get_success_url(self):
+        return reverse('lista_categorias')

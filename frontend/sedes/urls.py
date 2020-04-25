@@ -30,6 +30,12 @@ urlpatterns = [
     path('bodegas/modificar/<int:pk>', views.BodegaUpdate.as_view(), name='modificar_bodega'),
     path('bodegas/eliminar/<int:pk>', views.BodegaDelete.as_view(), name='eliminar_bodega'),
 
+    #categorias
+    path('categorias', views.CategoriaList.as_view(), name='lista_categorias'),
+    path('categorias/ver/<int:pk>', views.CategoriaDetail.as_view(), name='detalle_categoria'),
+    path('categorias/crear', views.CategoriaCreate.as_view(), name='crear_categoria'),
+    path('categorias/modificar/<int:pk>', views.CategoriaUpdate.as_view(), name='modificar_categoria'),
+    path('categorias/eliminar/<int:pk>', views.CategoriaDelete.as_view(), name='eliminar_categoria'),
     #Otros URLS de vistas   
 ]
 

@@ -1,0 +1,18 @@
+<!-- Esta vista muestra todas las categorias que hay disponibles -->
+
+{% extends '../base.html' %}
+{% block body_block %}
+
+{% if object.nombre %}
+<h1>Modificar &quot;{{ object.nombre }}&quot;</h1>
+{% else %}
+
+<h1>Crear una categoria</h1>
+{% endif %}
+<form  method="post" class="form">
+{% csrf_token %}
+{{ form.as_p }}
+<input class="btn btn-success" type="submit"  value="Crear categoria"  />
+</form>
+
+{% endblock %}

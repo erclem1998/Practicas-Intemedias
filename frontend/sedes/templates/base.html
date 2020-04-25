@@ -42,6 +42,7 @@
                 <li ><a class='navbar-link' href="{% url 'lista_sedes' %}">Sedes</a></li>
                 <li ><a class='navbar-link' href="{% url 'lista_productos' %}">Productos</a></li>
                 <li ><a class='navbar-link' href="{% url 'lista_bodegas' %}">Bodegas</a></li>
+                <li ><a class='navbar-link' href="{% url 'lista_categorias' %}">Categorias</a></li>
 
                 {% if request.user|has_group:"Vendedor" %}
                 <li class="dropdown">
