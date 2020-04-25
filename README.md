@@ -6,8 +6,8 @@
 - Cambiar contraseña
 
 ## Vistas faltantes:
-- CRUD Bodegas
-- CRUD Productos
+- CRUD Bodegas X ya esta incluido
+- CRUD Productos X ya esta incluido
 - Generacion de cambios a inventario (cambios de cantidades de productos)
 - Creacion de ventas
 - Categorias de productos
