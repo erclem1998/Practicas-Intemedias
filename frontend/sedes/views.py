@@ -169,4 +169,58 @@ class ProductoDelete(DeleteView):
     def get_success_url(self):
         return reverse('lista_productos')
 
+#Vista Bodegas
+class BodegaModelForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(BodegaModelForm, self).__init__(*args, **kwargs)
+
+        for field in self.fields:
+            self.fields[field].widget.attrs = {
+                'class': 'form-control'
+            }
+
+    class Meta:
+        model = Bodega
+        fields = '__all__'
+
+# Ver todas los Bodegas disponibles
+class BodegaList(ListView):
+    model = Bodega
+    template_name='bodegas/bodegas_list.html'
+
+# Ver un Bodega en especifico
+class BodegaDetail(DetailView):
+    model = Bodega
+    template_name='bodegas/bodegas_detail.html'
+
+# Crear Bodega 
+class BodegaCreate(CreateView):
+    form_class = BodegaModelForm
+    model = Bodega
+    template_name='bodegas/bodegas_form.html'
+    
+    # Redirigir al listado de Bodegas
+    def get_success_url(self):
+        return reverse('lista_bodegas')
+
+# Modificar Bodega 
+class BodegaUpdate(UpdateView):
+    model = Bodega
+    form_class = BodegaModelForm
+    template_name='bodegas/bodegas_form.html'
+    
+    # Redirigir al listado de Bodegas
+    def get_success_url(self):
+        return reverse('lista_bodegas')
+
+# Eliminar un Bodega
+class BodegaDelete(DeleteView):
+    model = Bodega
+    template_name='bodegas/bodegas_confirm_delete.html'
+    
+    # Redirigir al listado de Bodegas
+    def get_success_url(self):
+        return reverse('lista_bodegas')
+
 # Otras vistas iran aca...

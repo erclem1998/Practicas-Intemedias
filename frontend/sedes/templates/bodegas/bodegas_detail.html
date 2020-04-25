@@ -1,15 +1,13 @@
-<!-- Esta vista muestra el detalle de una sede -->
+<!-- Esta vista muestra el detalle de una bodega -->
 
 {% extends '../base.html' %}
 {% block body_block %}
 
-<h1>{{ object.alias }}</h1>
+<h1>{{ object.Nombre }}</h1>
 
 <p>Direccion: {{object.direccion}}</p>
-<p>Departamento: {{object.departamento}}</p>
-<p>Municipio: {{object.municipio}}</p>
+<p>Estado: <td>{% if object.activada %}{{ "Activa" }}{% else %}{{ "Inactiva" }}{% endif %}</td></p>
 <p>Encargado: <a href='{% url "ver_usuario" object.encargado.dpi %}'>{{ object.encargado.email }}</a></p>
-<p># de bodegas: {{object.numero_bodegas}}</p>
 
 <!-- Por hacer: detalle de encargado y de bodegas -->
 

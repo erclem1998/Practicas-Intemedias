@@ -1,36 +1,32 @@
-<!-- Esta vista muestra todas las sedes que hay disponibles -->
+<!-- Esta vista muestra todas las bodegas que hay disponibles -->
 
 {% extends '../base.html' %}
 {% block body_block %}
 
-<h1>Sedes</h1>
+<h1>Bodegas</h1>
 
-<a class="btn btn-success" href="{% url "crear_sede" %}">Crear sede</a>
+<a class="btn btn-success" href="{% url "crear_bodega" %}">Crear bodega</a>
 
 <table class="table table-striped">
     <thead class="thead-dark">
         <tr>
-            <th>Alias</th>
+            <th>Nombre</th>
             <th>Direccion</th>
-            <th>Departamento</th>
-            <th>Municipio</th>
+            <th>Estado</th>
             <th>Encargado</th>
-            <th>Bodegas</th>
             <th colspan="3">Acciones</th>
         </tr>
     </thead>
     <tbody class="table-hover">
-        {% for sede in object_list %}
+        {% for bodega in object_list %}
         <tr>
-            <td><a href="{% url "detalle_sede"  sede.id  %}">{{ sede.alias }}</a></td>
-            <td>{{ sede.direccion }}</td>
-            <td>{{ sede.departamento }}</td>
-            <td>{{ sede.municipio }}</td>
-            <td><a href='{% url "ver_usuario" sede.encargado.dpi %}'>{{ sede.encargado.email }}</a></td>
-            <td>{{ sede.numero_bodegas }}</td>
+            <td><a href="{% url "detalle_bodega"  bodega.id  %}">{{ bodega.nombre }}</a></td>
+            <td>{{ bodega.direccion }}</td>
+            <td>{% if bodega.activada %}{{ "Activa" }}{% else %}{{ "Inactiva" }}{% endif %}</td>
+            <td><a href='{% url "ver_usuario" bodega.encargado.dpi %}'>{{ bodega.encargado.email }}</a></td>    
             <td>
-                <a href="{% url "modificar_sede"  sede.id  %}"> <span class="glyphicon glyphicon-pencil">&nbsp;</span></a>
-                <a href="{% url "eliminar_sede"  sede.id  %}"> <span class="glyphicon glyphicon-remove">&nbsp;</span></a>
+                <a href="{% url "modificar_bodega"  bodega.id  %}"> <span class="glyphicon glyphicon-pencil">&nbsp;</span></a>
+                <a href="{% url "eliminar_bodega"  bodega.id  %}"> <span class="glyphicon glyphicon-remove">&nbsp;</span></a>
             </td>
         </tr>
 

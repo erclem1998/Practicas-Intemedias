@@ -23,6 +23,13 @@ urlpatterns = [
     path('productos/modificar/<int:pk>', views.ProductoUpdate.as_view(), name='modificar_producto'),
     path('productos/eliminar/<int:pk>', views.ProductoDelete.as_view(), name='eliminar_producto'),
 
+    #bodegas
+    path('bodegas', views.BodegaList.as_view(), name='lista_bodegas'),
+    path('bodegas/ver/<int:pk>', views.BodegaDetail.as_view(), name='detalle_bodega'),
+    path('bodegas/crear', views.BodegaCreate.as_view(), name='crear_bodega'),
+    path('bodegas/modificar/<int:pk>', views.BodegaUpdate.as_view(), name='modificar_bodega'),
+    path('bodegas/eliminar/<int:pk>', views.BodegaDelete.as_view(), name='eliminar_bodega'),
+
     #Otros URLS de vistas   
 ]
 

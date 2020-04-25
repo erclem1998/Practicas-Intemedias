@@ -1,18 +1,18 @@
-<!-- Esta vista muestra todas las sedes que hay disponibles -->
+<!-- Esta vista muestra todas las bodegas que hay disponibles -->
 
 {% extends '../base.html' %}
 {% block body_block %}
 
-{% if object.alias %}
-<h1>Modificar &quot;{{ object.alias }}&quot;</h1>
+{% if object.nombre %}
+<h1>Modificar &quot;{{ object.nombre }}&quot;</h1>
 {% else %}
 
-<h1>Crear una sede</h1>
+<h1>Crear una bodega</h1>
 {% endif %}
 <form  method="post" class="form">
 {% csrf_token %}
 {{ form.as_p }}
-<input class="btn btn-success" type="submit"  value="Crear sede"  />
+<input class="btn btn-success" type="submit"  value="Crear bodega"  />
 </form>
 
 {% endblock %}
