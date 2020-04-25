@@ -10,7 +10,7 @@
 - CRUD Productos X ya esta incluido
 - Generacion de cambios a inventario (cambios de cantidades de productos)
 - Creacion de ventas
-- Categorias de productos
+- Categorias de productos X ya esta incluido la creacion, modificacion, eliminacion y actualizacion
 - Transacciones (aceptar transacciones para usuarios repartidores)
 - CRUD Clientes de las ventas
 
