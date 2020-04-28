@@ -1,0 +1,37 @@
+<!-- Esta vista muestra todas las sedes que hay disponibles -->
+
+{% extends '../base.html' %}
+{% block body_block %}
+
+<h1>Clientes</h1>
+
+<a class="btn btn-success" href="{% url "crear_cliente" %}">Crear cliente</a>
+
+<table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>Nombre</th>
+            <th>Nit</th>
+            <th>DPI</th>
+            <th>Direccion</th>
+            <th colspan="2">Acciones</th>
+        </tr>
+    </thead>
+    <tbody class="table-hover">
+        {% for cliente in object_list %}
+        <tr>
+            <td>{{ cliente.nombre }}</td>
+            <td>{{ cliente.nit }}</td>
+            <td>{{ cliente.dpi }}</td>
+            <td>{{ cliente.direccion }}</td>
+            <td>
+                <a href="{% url "modificar_cliente"  cliente.dpi  %}"> <span class="glyphicon glyphicon-pencil">&nbsp;</span></a>
+                <a href="{% url "eliminar_cliente"  cliente.dpi  %}"> <span class="glyphicon glyphicon-remove">&nbsp;</span></a>
+            </td>
+        </tr>
+
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

@@ -76,6 +76,10 @@ class Bodega(models.Model):
     activada = models.BooleanField(default= True)
     encargado = models.ForeignKey('Usuario', on_delete=models.CASCADE)
 
+
+    def __str__(self):
+        return "Categoria %s" % self.nombre
+
 # Este modelo indica un producto dentro de una bodega
 # es una especie de control de inventario
 class Producto(models.Model):
@@ -85,11 +89,17 @@ class Producto(models.Model):
     descripcion = models.CharField(max_length=500)
     precio = models.DecimalField(max_digits=12, decimal_places=2)
     categorias = models.ManyToManyField('Categoria')
+    
+    def __str__(self):
+        return "%s [ %s ]" % (self.nombre, self.sku) 
 
 # Categoria de un producto
 # este tiene una relacion de muchos a muchos asimetrica con el modelo Producto
 class Categoria(models.Model):
     nombre = NameField('Nombre de categoria', unique=True, max_length=25)
+
+    def __str__(self):
+        return "Categoria %s" % self.nombre
 
 # Venta de un producto, realizada por un usuario vendedor
 class Venta(models.Model):
@@ -113,14 +123,7 @@ class Venta(models.Model):
     fecha_entrega = models.DateField('Fecha de entrega', auto_now=True)
     entregada = models.BooleanField(default=False)
 
-
-# Cliente de una venta
-class Cliente(models.Model):
-    dpi = models.CharField(max_length=100, primary_key=True)
-    nombre = models.CharField(max_length=200)
-    nit = models.CharField(max_length=15)
-    descripcion = models.CharField(max_length=500)
-    sedes = models.ManyToManyField('Sede')
+    productos = models.ManyToManyField('Producto', through= 'ProductoVenta')
 
 # En este se asocia un producto con una venta
 # sirve para tomar en cuenta cuanto producto descontar del inventario
@@ -129,6 +132,25 @@ class ProductoVenta(models.Model):
     producto = models.ForeignKey('Producto', on_delete=models.CASCADE)
     venta = models.ForeignKey('Venta', null=True, on_delete=models.SET_NULL)
     cantidad = models.DecimalField('Cantidad', decimal_places=2, max_digits=12)
+
+# Cliente de una venta
+class Cliente(models.Model):
+    dpi = models.BigIntegerField(
+        unique=True,
+        validators=[
+            MaxValueValidator(9999999999999),
+
+            MinValueValidator(100000000000)
+        ],
+        primary_key= True
+    )
+    nombre = models.CharField(max_length=200)
+    nit = models.CharField(max_length=15)
+    direccion = models.CharField(max_length=500)
+    sedes = models.ManyToManyField('Sede', verbose_name='Sedes a las que pertenece el cliente')
+
+    def __str__(self):
+        return "%s [ %s ]" % (self.nombre, self.dpi)
 
 # Factura de una venta, contiene el total de la venta junto si esta fue
 # a domicilio se recarga 10% del subtotal

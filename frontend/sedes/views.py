@@ -15,6 +15,7 @@ from django.urls import reverse
 
 # CRUD de los usuarios
 
+
 class UsuarioModelForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(UsuarioModelForm, self).__init__(*args, **kwargs)
@@ -23,19 +24,23 @@ class UsuarioModelForm(ModelForm):
             self.fields[field].widget.attrs = {
                 'class': 'form-control'
             }
+
     class Meta:
         model = Usuario
         fields = ['dpi', 'nombre', 'fecha_nacimiento', 'email', 'password']
 
+
 class UsuarioCreate(CreateView):
     form_class = UsuarioModelForm
     model = Usuario
-    
+
     # Redirigir registro al start
     def get_success_url(self):
         return reverse('profile')
 
 # ver el perfil de usuario en el que esta actualmente autenticado el usuario
+
+
 class UsuarioDetail(LoginRequiredMixin, DetailView):
     model = Usuario
 
@@ -67,6 +72,8 @@ class UsuarioUpdate(LoginRequiredMixin, UpdateView):
 # Accesible para todos los usuarios autenticados
 
 # Esta clase sirve para asignarle una clase CSS a cada uno de los campos en un form
+
+
 class SedeModelForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -82,40 +89,52 @@ class SedeModelForm(ModelForm):
         fields = '__all__'
 
 # Ver todas las sedes disponibles
+
+
 class SedeList(LoginRequiredMixin, ListView):
     model = Sede
 
 # Ver una sede en especifico
+
+
 class SedeDetail(DetailView):
     model = Sede
 
 # Crear sedes (esta funcion es unicamente para encargados de sede)
+
+
 class SedeCreate(CreateView):
     form_class = SedeModelForm
     model = Sede
-    
+
     # Redirigir al usuario a su perfil
     def get_success_url(self):
         return reverse('lista_sedes')
 
 # Modificar sedes (esta funcion es unicamente para encargados de sede)
+
+
 class SedeUpdate(UpdateView):
     model = Sede
     form_class = SedeModelForm
-    
+
     # Redirigir al usuario a su perfil
     def get_success_url(self):
         return reverse('lista_sedes')
 
 # Eliminar una sede (esta funcion es unicamente para encargados de sede)
+
+
 class SedeDelete(DeleteView):
     model = Sede
-    
+
     # Redirigir al usuario a su perfil
     def get_success_url(self):
         return reverse('lista_sedes')
 
-#Vista Productos
+# Vista Productos
+
+
 class ProductoModelForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -131,45 +150,57 @@ class ProductoModelForm(ModelForm):
         fields = '__all__'
 
 # Ver todas los productos disponibles
+
+
 class ProductoList(ListView):
     model = Producto
-    template_name='productos/producto_list.html'
+    template_name = 'productos/producto_list.html'
 
 # Ver un producto en especifico
+
+
 class ProductoDetail(DetailView):
     model = Producto
-    template_name='productos/producto_detail.html'
+    template_name = 'productos/producto_detail.html'
 
-# Crear Producto 
+# Crear Producto
+
+
 class ProductoCreate(CreateView):
     form_class = ProductoModelForm
     model = Producto
-    template_name='productos/producto_form.html'
-    
+    template_name = 'productos/producto_form.html'
+
     # Redirigir al listado de productos
     def get_success_url(self):
         return reverse('lista_productos')
 
-# Modificar Producto 
+# Modificar Producto
+
+
 class ProductoUpdate(UpdateView):
     model = Producto
     form_class = ProductoModelForm
-    template_name='productos/producto_form.html'
-    
+    template_name = 'productos/producto_form.html'
+
     # Redirigir al listado de productos
     def get_success_url(self):
         return reverse('lista_productos')
 
 # Eliminar un producto
+
+
 class ProductoDelete(DeleteView):
     model = Producto
-    template_name='productos/producto_confirm_delete.html'
-    
+    template_name = 'productos/producto_confirm_delete.html'
+
     # Redirigir al listado de productos
     def get_success_url(self):
         return reverse('lista_productos')
 
-#Vista Bodegas
+# Vista Bodegas
+
+
 class BodegaModelForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -185,48 +216,57 @@ class BodegaModelForm(ModelForm):
         fields = '__all__'
 
 # Ver todas los Bodegas disponibles
+
+
 class BodegaList(ListView):
     model = Bodega
-    template_name='bodegas/bodegas_list.html'
+    template_name = 'bodegas/bodegas_list.html'
 
 # Ver un Bodega en especifico
+
+
 class BodegaDetail(DetailView):
     model = Bodega
-    template_name='bodegas/bodegas_detail.html'
+    template_name = 'bodegas/bodegas_detail.html'
 
-# Crear Bodega 
+# Crear Bodega
+
+
 class BodegaCreate(CreateView):
     form_class = BodegaModelForm
     model = Bodega
-    template_name='bodegas/bodegas_form.html'
-    
+    template_name = 'bodegas/bodegas_form.html'
+
     # Redirigir al listado de Bodegas
     def get_success_url(self):
         return reverse('lista_bodegas')
 
-# Modificar Bodega 
+# Modificar Bodega
+
+
 class BodegaUpdate(UpdateView):
     model = Bodega
     form_class = BodegaModelForm
-    template_name='bodegas/bodegas_form.html'
-    
+    template_name = 'bodegas/bodegas_form.html'
+
     # Redirigir al listado de Bodegas
     def get_success_url(self):
         return reverse('lista_bodegas')
 
 # Eliminar un Bodega
+
+
 class BodegaDelete(DeleteView):
     model = Bodega
-    template_name='bodegas/bodegas_confirm_delete.html'
-    
+    template_name = 'bodegas/bodegas_confirm_delete.html'
+
     # Redirigir al listado de Bodegas
     def get_success_url(self):
         return reverse('lista_bodegas')
 
-# Otras vistas iran aca...
+# Vista Categorias
 
-#--------------------------------------------------------------------------
-#Vista Categorias
+
 class CategoriasModelForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -242,41 +282,151 @@ class CategoriasModelForm(ModelForm):
         fields = '__all__'
 
 # Ver todas los Categorias disponibles
+
+
 class CategoriaList(ListView):
     model = Categoria
-    template_name='categorias/categorias_list.html'
+    template_name = 'categorias/categorias_list.html'
 
 
 # Ver un Categoria en especifico
 class CategoriaDetail(DetailView):
     model = Categoria
-    template_name='categorias/categorias_detail.html'
+    template_name = 'categorias/categorias_detail.html'
 
-# Crear Categoria 
+# Crear Categoria
+
+
 class CategoriaCreate(CreateView):
     form_class = CategoriasModelForm
     model = Categoria
-    template_name='categorias/categorias_form.html'
-    
+    template_name = 'categorias/categorias_form.html'
+
     # Redirigir al listado de Categoria
     def get_success_url(self):
         return reverse('lista_categorias')
 
 # Eliminar una categoria
+
+
 class CategoriaDelete(DeleteView):
     model = Categoria
-    template_name='categorias/categorias_confirm_delete.html'
-    
+    template_name = 'categorias/categorias_confirm_delete.html'
+
     # Redirigir al listado de Bodegas
     def get_success_url(self):
         return reverse('lista_categorias')
 
-# Modificar Categoria 
+# Modificar Categoria
+
+
 class CategoriaUpdate(UpdateView):
     model = Categoria
     form_class = CategoriasModelForm
-    template_name='categorias/categorias_form.html'
-    
+    template_name = 'categorias/categorias_form.html'
+
     # Redirigir al listado de Bodegas
     def get_success_url(self):
         return reverse('lista_categorias')
+
+# Clientes
+# Accesible por usuarios de ventas
+
+
+class ClientesModelForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(ClientesModelForm, self).__init__(*args, **kwargs)
+
+        for field in self.fields:
+            self.fields[field].widget.attrs = {
+                'class': 'form-control'
+            }
+
+    class Meta:
+        model = Cliente
+        fields = '__all__'
+
+# Ver todas los Categorias disponibles
+
+
+class ClienteList(ListView):
+    model = Cliente
+    template_name = 'clientes/clientes_list.html'
+
+# Crear cliente
+
+
+class ClienteCreate(CreateView):
+    form_class = ClientesModelForm
+    model = Cliente
+    template_name = 'clientes/clientes_form.html'
+
+    # Redirigir al listado de clientes
+    def get_success_url(self):
+        return reverse('lista_clientes')
+
+# Eliminar un cliente
+
+
+class ClienteDelete(DeleteView):
+    model = Cliente
+    template_name = 'clientes/clientes_confirm_delete.html'
+
+    # Redirigir al listado de clientes
+    def get_success_url(self):
+        return reverse('lista_clientes')
+
+# Modificar cliente
+
+
+class ClienteUpdate(UpdateView):
+    model = Cliente
+    form_class = ClientesModelForm
+    template_name = 'clientes/clientes_form.html'
+
+    # Redirigir al listado de productos
+    def get_success_url(self):
+        return reverse('lista_clientes')
+
+
+# VENTAS
+
+# Lista de ventas
+
+class VentasModelForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(VentasModelForm, self).__init__(*args, **kwargs)
+
+        for field in self.fields:
+            self.fields[field].widget.attrs = {
+                'class': 'form-control'
+            }
+        
+        self.fields[ 'fecha_facturacion' ].input_formats = [ '%d/%m/%Y' ]
+
+    class Meta:
+        model = Venta
+        fields = '__all__'
+
+# Ver todas los Categorias disponibles
+
+
+class VentasList(ListView):
+    model = Venta
+    template_name = 'ventas/ventas_list.html'
+
+# Crear cliente
+
+
+class VentaCreate(CreateView):
+    form_class = VentasModelForm
+    model = Venta
+    template_name = 'ventas/venta_form.html'
+
+    # Redirigir al listado de clientes
+    def get_success_url(self):
+        return reverse('lista_ventas')
+
+

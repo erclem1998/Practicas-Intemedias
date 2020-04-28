@@ -1,4 +1,4 @@
-<!-- Esta vista muestra todas las bodegas que hay disponibles -->
+<!-- Esta vista muestra todas las sedes que hay disponibles -->
 
 {% extends '../base.html' %}
 {% block body_block %}
@@ -7,12 +7,12 @@
 <h1>Modificar &quot;{{ object.nombre }}&quot;</h1>
 {% else %}
 
-<h1>Crear una bodega</h1>
+<h1>Crear un cliente</h1>
 {% endif %}
 <form  method="post" class="form">
 {% csrf_token %}
 {{ form.as_p }}
-<input class="btn btn-success" type="submit"  value="Aceptar"  />
+<input class="btn btn-success" type="submit" value="Aceptar"/>
 </form>
 
 {% endblock %}
