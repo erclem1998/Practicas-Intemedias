@@ -9,10 +9,10 @@
 
 <h1>Crear un producto</h1>
 {% endif %}
-<form  method="post" class="form">
-{% csrf_token %}
-{{ form.as_p }}
-<input class="btn btn-success" type="submit"  value="Comfirmar"  />
+<form method="post" class="form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input class="btn btn-success" type="submit" value="Comfirmar" />
 </form>
 
 {% endblock %}

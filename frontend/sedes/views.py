@@ -15,6 +15,9 @@ from django.forms import ModelForm
 
 from django.urls import reverse
 
+import json
+from django.core.serializers.json import DjangoJSONEncoder
+
 # CRUD de los usuarios
 
 
@@ -429,26 +432,46 @@ class VentasList(ListView):
 
 def VentaCreate(request):
     if (request.method == 'GET'):
+        
+        bodegas = Bodega.objects.all()
+        bodega_productos = []
+        pindex = 1
+        for bodega in bodegas:
+            productos = []
+            for bps in bodega.bodegaproducto_set.all():
+                productos.append({'id': bps.producto.id, 'index': pindex, 'nombre': bps.producto.nombre, 'cantidad': bps.cantidad + 5 })
+                pindex = pindex + 1
+
+            bodega = {
+                'productos': productos,
+                'nombre': bodega.nombre,
+                'id': bodega.id,
+                'activada': bodega.activada 
+            }
+
+            bodega_productos.append(bodega)
+        
         context = {
             'clientes': Cliente.objects.all(),
-            'vendedores': Usuario.objects.filter(groups__name='Vendedor'),
             'productos': Producto.objects.all(),
-            'repartidores': Usuario.objects.filter(groups__name='Repartidor')
+            'repartidores': Usuario.objects.filter(groups__name='Repartidor'),
+            'bodegas': bodegas,
+            'bodega_productos': json.dumps(list(bodega_productos), cls=DjangoJSONEncoder),
         }
 
-
         return render(request, 'ventas/venta_form.html', context)
+    
     elif (request.method == 'POST'):
 
         cliente_id = request.POST.get('cliente')
         cliente = get_object_or_404(Cliente, dpi= cliente_id)
 
-        vendedor_id = request.POST.get('vendedor')
-        vendedor = get_object_or_404(Usuario, email= vendedor_id)
+        vendedor = request.user
+        print(vendedor)
 
         fecha_facturacion = request.POST.get('fecha_facturacion')
         
-        productos_agregados = request.POST.get('productos_agregados')
+        productos_agregados = dict(request.POST)["productos_agregados"]
 
         tipo = request.POST.get('tipo')
         a_domicilio = tipo == 'D'
@@ -471,10 +494,18 @@ def VentaCreate(request):
         for producto in productos_agregados:
             data = producto.split('#_v_#')
             
-            product_id = data[0]
-            product_qtty = data[1]
+            id_producto = data[0]
+            cantidad = int(data[1])
+            id_bodega = data[2]
 
+            producto = get_object_or_404(Producto, id= id_producto)
+            bodega = get_object_or_404(Bodega, id= id_bodega)
+
+            prod_bodega = get_object_or_404(BodegaProducto, producto= producto, bodega= bodega)
+            
+            prod_bodega.cantidad = prod_bodega.cantidad - cantidad
+            prod_bodega.save()
 
         venta.save()
-        
+
         return HttpResponseRedirect(reverse('lista_ventas'))

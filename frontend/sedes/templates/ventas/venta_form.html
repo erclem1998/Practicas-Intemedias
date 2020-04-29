@@ -5,6 +5,7 @@
 
 <h1>Crear una venta</h1>
 <hr>
+
 <div class="jumbotron">
 
     <form method="post" class="form" id="create_venta_form">
@@ -25,21 +26,6 @@
             </select>
         </p>
         <p>
-            <label for="id_vendedor">Vendedor:</label>
-            <select name="vendedor" class="form-control" required id="id_vendedor">
-                <option value="" selected>---------</option>
-
-
-                {% for vendedor in vendedores %}
-
-                <option value="{{vendedor.email}}">{{vendedor}}</option>
-
-                {% endfor %}
-
-            </select>
-
-        </p>
-        <p>
             <label for="id_fecha_facturacion">Fecha de facturacion:</label>
 
             <input type="date" name="fecha_facturacion" class="form-control" required id="id_fecha_facturacion"
@@ -47,49 +33,54 @@
         </p>
 
         <div class="row">
-            <div class="col-md-8">
-
+            <div class="col-md-12">
                 <h2>Agregar productos</h2>
-                <hr>
-                <div class="row">
+            </div>
 
-                    <div class="col-md-8">
-                        <label for="id_productos">Productos:</label>
-                        <select name="productos" class="form-control" id="id_productos" multiple style="height: 400px">
-                            {% for producto in productos %}
+            <div class="col-md-4">
+                <h3>1. Seleccionar bodegas</h3>
+                <label for="id_bodegas">Bodegas:</label>
+                <select name="bodegas" class="form-control" id="id_bodegas" multiple style="height: 250px;">
 
-                            <option value="{{producto.id}}">{{producto}}</option>
+                </select>
+            </div>
 
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="producto_qtty">Cantidad:</label>
-                        <input type="number" id="producto_qtty" step="1" min="0" class="form-control" placeholder="Cantidad de productos...">
-                        <p></p>
-                        <input type="button" id="btn_add" onclick="agregar_producto()" value="aceptar"
-                            class="btn btn-primary btn-block" />
-                    </div>
-                </div>
+            <div class="col-md-4">
+                <h3>2. Seleccionar productos</h3>
+                <label for="id_productos">Productos seleccionados:</label>
+                <select name="productos" class="form-control" id="id_productos" multiple style="height: 250px;">
+
+                </select>
             </div>
             <div class="col-md-4">
-                <h2>Productos Agregados</h2>
+                <h3>3. Seleccionar cantidad</h3>
+                <label for="producto_qtty">Cantidad de productos a agregar:</label>
+
+                <input type="number" id="producto_qtty" step="1" min="1" value="1" class="form-control"
+                    placeholder="Cantidad de productos...">
+                <p></p>
+                <input type="button" id="btn_add" onclick="agregar_producto()" value="aceptar"
+                    class="btn btn-primary btn-block" />
+            </div>
+
+            <div class="col-md-12">
+                <h3>Productos Agregados</h3>
                 <hr>
 
                 <label for="productos_agregados">Productos agregados:</label>
+                <input type="button" id="btn_remove_product" onclick="remove_selected_products()"
+                    value="Remover elementos seleccionados" class="btn btn-xs btn-danger pull-right" />
                 <select name="productos_agregados" class="form-control" id="productos_agregados" multiple
-                    style="height: 350px">
+                    style="height: 250px;">
 
                 </select>
                 <p></p>
-                <input type="button" id="btn_remove_product" onclick="remove_selected_products()"
-                    value="Remover elementos seleccionados" class="btn btn-xs btn-danger btn-block" />
             </div>
         </div>
         </p>
-
+        <hr>
         <p>
-            <label for="id_tipo">Tipo:</label>
+            <label for="id_tipo">Tipo de entrega:</label>
             <select name="tipo" class="form-control" id="id_tipo">
                 <option value="D">A domicilio</option>
                 <option value="L" selected>Local</option>
@@ -118,45 +109,182 @@
 
 <script>
 
+    let bodega_productos = JSON.parse(`{{bodega_productos|safe}}`);
+
+    function buscar_bodega(index) {
+        if (index < 0 || index >= bodega_productos.length) {
+            return null;
+        }
+
+        return bodega_productos[index]
+    }
+
+    function buscar_producto_bodega(pindex) {
+
+        for (let j = 0; j < bodega_productos.length; j++) {
+            let bodega = bodega_productos[j]
+            for (let i = 0; i < bodega.productos.length; i++) {
+                let producto = bodega.productos[i];
+
+                if (producto.index == pindex) {
+                    return { bodega: bodega, producto: producto };
+                }
+            }
+        }
+
+        return null;
+    }
+
+    function buscar_producto(pindex) {
+        let producto_bodega = buscar_producto_bodega(pindex);
+        if (!producto_bodega) {
+            return -1;
+        }
+        return producto_bodega.producto;
+    }
+
+    function mostrar_productos() {
+
+        let bodegas = $("#id_bodegas").val();
+
+        $('#id_productos option').remove();
+
+        bodegas.forEach(bindex => {
+            let bodega = buscar_bodega(bindex * 1);
+            if (!bodega) {
+                return;
+            }
+            $('#id_productos').append($('<option>', {
+                value: "-1",
+                text: `── Bodega "${bodega.nombre}" ──`,
+                disabled: true,
+                style: "font-weight: bold"
+            }));
+
+            $('#id_productos').append($('<option>', {
+                value: "-1",
+                text: ``,
+                disabled: true,
+                style: "font-weight: bold"
+            }));
+
+            bodega.productos.forEach(producto => {
+                $('#id_productos').append($('<option>', {
+                    value: producto.index,
+                    text: `${producto.nombre} (${producto.cantidad} unidades en total)`,
+                    disabled: producto.cantidad == 0,
+                    style: producto.cantidad == 0 ? "color: red" : "color: blue"
+                }));
+            });
+
+
+            $('#id_productos').append($('<option>', {
+                value: "-1",
+                text: ``,
+                disabled: true,
+                style: "font-weight: bold"
+            }));
+        })
+
+    }
+
+    bodega_productos.forEach((bodega, index) => {
+
+        $('#id_bodegas').append($('<option>', {
+            value: index,
+            text: bodega.nombre + (bodega.activada ? "" : " (inactiva)"),
+            selected: index == 0,
+            disabled: !bodega.activada
+        }));
+    });
+
+    mostrar_productos()
+
     function remove_selected_products() {
-        ($("#productos_agregados").val() + "").split(",").forEach(v => {
-            console.log("Removiendo: " + v);
+        $("#productos_agregados").val().forEach(v => {
+            datos = v.split("#_v_#");
+
+            let pid = datos[3] * 1
+            let qtty = datos[1] * 1
+
+            let producto = buscar_producto(pid);
+
+            producto.cantidad += qtty;
+
             $(`#productos_agregados option[value='${v}']`).remove();
         });
+
+        mostrar_productos();
+    }
+
+    function buscar_nombre_bodega(index) {
+        let bodega = buscar_bodega(index);
+        if (!bodega) {
+            return "";
+        }
+        return bodega.nombre;
     }
 
     function agregar_producto() {
-        let products_id = $("#id_productos").val() + "";
-        let qtty = $("#producto_qtty").val();
 
-        if (products_id <= 0) {
+        let products_indexes = $("#id_productos").val();
+        if (products_indexes <= 0) {
             alert("Por favor selecciona un producto");
             return;
         }
 
+        let qtty = $("#producto_qtty").val();
         if (qtty <= 0) {
             alert("Por favor ingresa una cantidad valida");
             return;
         }
 
-        let products = products_id.split(",");
+        products_indexes.forEach(pindex => {
 
-        products.forEach(product_id => {
-            let product_name = $(`#id_productos option[value='${product_id}']`).text();
+            let producto_bodega = buscar_producto_bodega(pindex);
+            if (!producto_bodega) {
+                alert("Por favor selecciona un producto valido");
+                return;
+            }
+
+            let producto = producto_bodega.producto
+            if (!producto) {
+                alert("Por favor selecciona un producto valido");
+                return;
+            }
+
+            let bodega = producto_bodega.bodega
+            if (!bodega) {
+                alert("Por favor selecciona un producto de una bodega");
+                return;
+            }
+
+            if (producto.cantidad < qtty) {
+                alert("No hay en existencia " +
+                    `${qtty} unidades del producto ` +
+                    `"${producto.nombre}"" (${producto.cantidad} unidades disponibles) ` +
+                    `en "${bodega.nombre}"`)
+
+                return;
+            }
+
+            producto.cantidad = producto.cantidad - qtty;
+
+            //let product_name = $(`#id_productos option[value='${product_id}']`).text();
 
             $('#productos_agregados').append($('<option>', {
-                value: `${product_id}#_v_#${qtty}`,
-                text: `${qtty} - ${product_name}`
+                value: `${producto.id}#_v_#${qtty}#_v_#${bodega.id}#_v_#${producto.index}`,
+                text: `${qtty} unidades de ${producto.nombre} - ${bodega.nombre}`,
+                style: "color: green",
             }));
+
+            mostrar_productos();
         });
 
     }
 
-    $('#create_venta_form').submit(function () {
-
+    function prepare_form() {
         let agregados = $("#productos_agregados option");
-
-        console.log(agregados.length);
 
         if (agregados.length > 0) {
             $('#productos_agregados option').prop('selected', true);
@@ -167,6 +295,17 @@
         }
 
         return false;
+    }
+
+    $('#create_venta_form').submit(function () {
+        return prepare_form();
+    });
+
+    $('#id_bodegas').on('change', function () {
+        let bodegas = $("#id_bodegas").val();
+        bodegas.forEach(bodega => {
+            mostrar_productos(bodega)
+        });
     });
 
     $('#id_tipo').on('change', function () {
@@ -181,6 +320,8 @@
             $("#id_repartidor").prop('required', true);
         }
     });
+
+    document.getElementById("id_fecha_facturacion").valueAsDate = new Date()
 
 </script>
 
