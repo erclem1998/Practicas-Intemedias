@@ -9,10 +9,10 @@
 - CRUD Bodegas X ya esta incluido
 - CRUD Productos X ya esta incluido
 - Generacion de cambios a inventario (cambios de cantidades de productos)
-- Creacion de ventas
+- Creacion de ventas x
 - Categorias de productos X ya esta incluido la creacion, modificacion, eliminacion y actualizacion
 - Transacciones (aceptar transacciones para usuarios repartidores)
-- CRUD Clientes de las ventas
+- CRUD Clientes de las ventas x
 
 ## Otros:
 - Generar factura pdf de las ventas

@@ -1,10 +1,12 @@
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from .models import *
 
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+
+from django.conf import settings
 
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -144,6 +146,11 @@ class ProductoModelForm(ModelForm):
             self.fields[field].widget.attrs = {
                 'class': 'form-control'
             }
+
+        self.fields['precio'].widget.attrs = {
+            'step': 'any',
+            'class': 'form-control'
+        }
 
     class Meta:
         model = Producto
@@ -403,8 +410,8 @@ class VentasModelForm(ModelForm):
             self.fields[field].widget.attrs = {
                 'class': 'form-control'
             }
-        
-        self.fields[ 'fecha_facturacion' ].input_formats = [ '%d/%m/%Y' ]
+
+        self.fields['fecha_facturacion'].input_formats = ['%d/%m/%Y']
 
     class Meta:
         model = Venta
@@ -420,13 +427,54 @@ class VentasList(ListView):
 # Crear cliente
 
 
-class VentaCreate(CreateView):
-    form_class = VentasModelForm
-    model = Venta
-    template_name = 'ventas/venta_form.html'
+def VentaCreate(request):
+    if (request.method == 'GET'):
+        context = {
+            'clientes': Cliente.objects.all(),
+            'vendedores': Usuario.objects.filter(groups__name='Vendedor'),
+            'productos': Producto.objects.all(),
+            'repartidores': Usuario.objects.filter(groups__name='Repartidor')
+        }
 
-    # Redirigir al listado de clientes
-    def get_success_url(self):
-        return reverse('lista_ventas')
+
+        return render(request, 'ventas/venta_form.html', context)
+    elif (request.method == 'POST'):
+
+        cliente_id = request.POST.get('cliente')
+        cliente = get_object_or_404(Cliente, dpi= cliente_id)
+
+        vendedor_id = request.POST.get('vendedor')
+        vendedor = get_object_or_404(Usuario, email= vendedor_id)
+
+        fecha_facturacion = request.POST.get('fecha_facturacion')
+        
+        productos_agregados = request.POST.get('productos_agregados')
+
+        tipo = request.POST.get('tipo')
+        a_domicilio = tipo == 'D'
+
+        repartidor_id = request.POST.get('repartidor') if a_domicilio else None
+        repartidor = get_object_or_404(Usuario, email= repartidor_id) if repartidor_id else None
+        
+        fecha_entrega = fecha_facturacion if not a_domicilio else None 
+
+        venta = Venta(
+            cliente=cliente,
+            vendedor=vendedor,
+            fecha_facturacion=fecha_facturacion,
+            tipo= tipo,
+            entregada= not a_domicilio, #si el tipo es local, sera verdadero, de lo contrario, falso,
+            repartidor= repartidor,
+            fecha_entrega= fecha_entrega,
+        )
+
+        for producto in productos_agregados:
+            data = producto.split('#_v_#')
+            
+            product_id = data[0]
+            product_qtty = data[1]
 
 
+        venta.save()
+        
+        return HttpResponseRedirect(reverse('lista_ventas'))

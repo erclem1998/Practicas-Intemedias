@@ -75,10 +75,15 @@ class Bodega(models.Model):
     direccion = models.CharField(max_length=500)
     activada = models.BooleanField(default= True)
     encargado = models.ForeignKey('Usuario', on_delete=models.CASCADE)
-
+    productos = models.ManyToManyField('Producto', through='BodegaProducto')
 
     def __str__(self):
         return "Categoria %s" % self.nombre
+
+class BodegaProducto(models.Model):
+    bodega = models.ForeignKey('Bodega', on_delete= models.CASCADE)
+    producto = models.ForeignKey('Producto', on_delete= models.CASCADE)
+    cantidad = models.IntegerField(verbose_name='Cantidad de productos en existencia', default= 0)
 
 # Este modelo indica un producto dentro de una bodega
 # es una especie de control de inventario
@@ -90,6 +95,7 @@ class Producto(models.Model):
     precio = models.DecimalField(max_digits=12, decimal_places=2)
     categorias = models.ManyToManyField('Categoria')
     
+
     def __str__(self):
         return "%s [ %s ]" % (self.nombre, self.sku) 
 
@@ -104,7 +110,7 @@ class Categoria(models.Model):
 # Venta de un producto, realizada por un usuario vendedor
 class Venta(models.Model):
     cliente = models.ForeignKey('Cliente', on_delete=models.CASCADE)
-    vendedor = models.ForeignKey('Usuario', on_delete=models.CASCADE, related_name='vendedor')
+    vendedor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='vendedor')
 
     fecha_facturacion = models.DateField('Fecha de facturacion')
 
@@ -118,12 +124,12 @@ class Venta(models.Model):
     tipo = models.CharField(
         max_length=1, choices=VENTA_ESTADO_CHOICES, default=LOCAL)
     repartidor = models.ForeignKey(
-        'Usuario', null=True, on_delete=models.SET_NULL, related_name='repartidor')
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name='repartidor', blank= True)
 
     fecha_entrega = models.DateField('Fecha de entrega', auto_now=True)
     entregada = models.BooleanField(default=False)
 
-    productos = models.ManyToManyField('Producto', through= 'ProductoVenta')
+    productos = models.ManyToManyField('Producto', through= 'ProductoVenta', blank= True)
 
 # En este se asocia un producto con una venta
 # sirve para tomar en cuenta cuanto producto descontar del inventario
@@ -131,7 +137,7 @@ class Venta(models.Model):
 class ProductoVenta(models.Model):
     producto = models.ForeignKey('Producto', on_delete=models.CASCADE)
     venta = models.ForeignKey('Venta', null=True, on_delete=models.SET_NULL)
-    cantidad = models.DecimalField('Cantidad', decimal_places=2, max_digits=12)
+    cantidad = models.DecimalField('Cantidad', decimal_places=2, max_digits=12, validators= [MinValueValidator(0)])
 
 # Cliente de una venta
 class Cliente(models.Model):
@@ -169,5 +175,5 @@ class LogActualizacionInventario(models.Model):
     cantidad_vieja = models.DecimalField(decimal_places=2, max_digits=12)
     descripcion = models.CharField(max_length=500)
     usuario = models.ForeignKey(
-        'Usuario', on_delete=models.SET_NULL, null=True)
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     fecha = models.DateField('Fecha de cambio', auto_now_add=True)
