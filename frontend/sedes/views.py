@@ -439,7 +439,7 @@ def VentaCreate(request):
         for bodega in bodegas:
             productos = []
             for bps in bodega.bodegaproducto_set.all():
-                productos.append({'id': bps.producto.id, 'index': pindex, 'nombre': bps.producto.nombre, 'cantidad': bps.cantidad + 5 })
+                productos.append({'id': bps.producto.id, 'index': pindex, 'nombre': bps.producto.nombre, 'cantidad': bps.cantidad })
                 pindex = pindex + 1
 
             bodega = {
@@ -495,14 +495,16 @@ def VentaCreate(request):
             data = producto.split('#_v_#')
             
             id_producto = data[0]
-            cantidad = int(data[1])
             id_bodega = data[2]
 
             producto = get_object_or_404(Producto, id= id_producto)
             bodega = get_object_or_404(Bodega, id= id_bodega)
 
             prod_bodega = get_object_or_404(BodegaProducto, producto= producto, bodega= bodega)
-            
+
+            cantidad = int(data[1])
+            cantidad = cantidad if cantidad > 0 and cantidad <= prod_bodega.cantidad else 0
+
             prod_bodega.cantidad = prod_bodega.cantidad - cantidad
             prod_bodega.save()
 

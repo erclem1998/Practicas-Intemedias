@@ -3,12 +3,55 @@
 {% extends '../base.html' %}
 {% block body_block %}
 
-<h1>{{ object.Nombre }}</h1>
+<h1>{{ object.nombre }}</h1>
 
 <p>Direccion: {{object.direccion}}</p>
 <p>Estado: <td>{% if object.activada %}{{ "Activa" }}{% else %}{{ "Inactiva" }}{% endif %}</td></p>
 <p>Encargado: <a href='{% url "ver_usuario" object.encargado.dpi %}'>{{ object.encargado.email }}</a></p>
 
 <!-- Por hacer: detalle de encargado y de bodegas -->
+
+<h3>Productos en la bodega</h3>
+
+<table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>SKU</th>
+            <th>Codigo de Barras</th>
+            <th>Nombre</th>
+            <th>Descripcion</th>
+            <th>Precio</th>
+            <th>Categorias</th>
+            <th>Cantidad disponible</th>
+        </tr>
+    </thead>
+    <tbody class="table-hover">
+        {% for bp in object.bodegaproducto_set.all %}
+        <tr>
+            <td><a href="{% url "detalle_producto"  bp.producto.id  %}">{{ bp.producto.sku }}</a></td>
+            <td>{{ bp.producto.codigo_barras }}</td>
+            <td>{{ bp.producto.nombre }}</td>
+            <td>{{ bp.producto.descripcion }}</td>
+            <td>{{ bp.producto.precio }}</a></td>
+            <td> 
+                <ul>
+                {% for categoria in bp.producto.categorias.all %}
+                    <li>{{ categoria.nombre }} </li>
+                {% endfor %} 
+                </ul>
+            </td>
+            <td>
+                <input type="step" class="form-control input-sm" step=1 value="{{ bp.cantidad }}" name="{{ bp.bodega.id }}_{{ bp.producto.id }}" min=0 />
+            </td>
+            <td>
+                <a href="{% url "modificar_producto"  bp.producto.id  %}" class="btn btn-xs btn-warning"> <span class="glyphicon glyphicon-plus"></span> Modificar inventario</a>
+            </td>
+        </tr>
+
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url "modificar_bodega"  object.id  %}" class="btn btn-success"> <span class="glyphicon glyphicon-pencil"></span> Modificar</a>
+                
 
 {% endblock %}

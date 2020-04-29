@@ -78,13 +78,15 @@ class Bodega(models.Model):
     productos = models.ManyToManyField('Producto', through='BodegaProducto')
 
     def __str__(self):
-        return "Categoria %s" % self.nombre
+        return self.nombre
 
 class BodegaProducto(models.Model):
     bodega = models.ForeignKey('Bodega', on_delete= models.CASCADE)
     producto = models.ForeignKey('Producto', on_delete= models.CASCADE)
     cantidad = models.IntegerField(verbose_name='Cantidad de productos en existencia', default= 0)
 
+    def __str__(self):
+        return "%s unidades de %s en %s" % (self.cantidad, self.producto, self.bodega)
 # Este modelo indica un producto dentro de una bodega
 # es una especie de control de inventario
 class Producto(models.Model):

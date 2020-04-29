@@ -10,6 +10,7 @@ from .models import Venta
 from .models import ProductoVenta
 from .models import Factura
 from .models import LogActualizacionInventario
+from .models import BodegaProducto
 
 from django import forms
 from django.contrib import admin
@@ -103,3 +104,4 @@ admin.site.register(Factura)
 admin.site.register(LogActualizacionInventario)
 admin.site.register(Usuario, UserAdmin)
 admin.site.register(Permission)
+admin.site.register(BodegaProducto)
