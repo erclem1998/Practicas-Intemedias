@@ -13,11 +13,18 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.forms import ModelForm
 
+from io import BytesIO
+from django.template.loader import get_template
+from django_xhtml2pdf.views import PdfMixin
+
+
 from django.urls import reverse
 from django import forms
 
 import json
 from django.core.serializers.json import DjangoJSONEncoder
+import decimal
+
 
 # CRUD de los usuarios
 
@@ -430,11 +437,9 @@ class VentasList(ListView):
 
 # ver una unica venta
 
-
 class VentaDetail(DetailView):
     model = Venta
     template_name = 'ventas/venta_detail.html'
-    var1 = "hola"
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -450,7 +455,7 @@ class VentaDetail(DetailView):
             reglon_factura = {}
             reglon_factura['producto'] = pv.producto
             reglon_factura['cantidad'] = pv.cantidad
-            reglon_factura['subtotal'] = pv.cantidad * pv.producto.precio
+            reglon_factura['subtotal'] = round(pv.cantidad * pv.producto.precio, 2)
             total_actual += reglon_factura['subtotal']
             reglon_factura['total'] = total_actual
 
@@ -458,10 +463,44 @@ class VentaDetail(DetailView):
 
         context['factura'] = factura
         context['total'] = total_actual
+        context['total_10p'] = round(decimal.Decimal(total_actual) * decimal.Decimal(0.1), 2)
 
-        context['total_recargo'] = total_actual * 1.1
+        context['total_recargo'] = round(decimal.Decimal(total_actual) * decimal.Decimal(1.1), 2)
 
         return context
+
+class PDFVentaDetail(PdfMixin, DetailView):
+    model = Venta
+    template_name = 'ventas/venta_pdf.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        venta = context['venta']
+        factura = []
+        print(venta.productoventa_set)
+
+        producto_ventas = ProductoVenta.objects.filter(venta= venta)
+
+        total_actual = 0
+        for pv in producto_ventas:
+            reglon_factura = {}
+            reglon_factura['producto'] = pv.producto
+            reglon_factura['cantidad'] = pv.cantidad
+            reglon_factura['subtotal'] = round(pv.cantidad * pv.producto.precio, 2)
+            total_actual += reglon_factura['subtotal']
+            reglon_factura['total'] = total_actual
+
+            factura.append(reglon_factura)
+
+        context['factura'] = factura
+        context['total'] = total_actual
+        context['total_10p'] = round(decimal.Decimal(total_actual) * decimal.Decimal(0.1), 2)
+
+        context['total_recargo'] = round(decimal.Decimal(total_actual) * decimal.Decimal(1.1), 2)
+
+        return context
+
 
 # Crear venta
 
@@ -596,3 +635,8 @@ class InventarioUpdate(UpdateView):
     def get_success_url(self):
         return reverse('detalle_bodega', args=[self.object.bodega.id])
 
+
+# REPORTES
+def reporte_ventas(request):
+    context= {}
+    return render(request, 'reportes/reporte_venta.html', context)

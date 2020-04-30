@@ -15,6 +15,8 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
         integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd"
         crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
 </head>
 
 <body>
@@ -39,22 +41,25 @@
                             class="glyphicon glyphicon-user">&nbsp;</span>Administrar</a></li>
                 {% endif %}
 
+                <!--
                 <li ><a class='navbar-link' href="{% url 'lista_sedes' %}">Sedes</a></li>
                 <li ><a class='navbar-link' href="{% url 'lista_productos' %}">Productos</a></li>
                 <li ><a class='navbar-link' href="{% url 'lista_bodegas' %}">Bodegas</a></li>
                 <li ><a class='navbar-link' href="{% url 'lista_categorias' %}">Categorias</a></li>
                 <li ><a class='navbar-link' href="{% url 'lista_clientes' %}">Clientes</a></li>
                 <li ><a class='navbar-link' href="{% url 'lista_ventas' %}">Ventas</a></li>
+                -->
+
+                <li><a class='navbar-link' href="{% url 'lista_sedes' %}">Sedes</a></li>
 
                 {% if request.user|has_group:"Vendedor" %}
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                         aria-expanded="false">Vendedor <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">Clientes</a></li>
-                        <li><a href="#">Ventas</a></li>
-                        <li><a href="#">Facturas</a></li>
-                        <li><a href="#">Reportes</a></li>
+                        <li><a href="{% url 'lista_clientes' %}">Clientes</a></li>
+                        <li><a href="{% url 'lista_ventas' %}">Ventas</a></li>
+                        <li><a href="{% url 'reporte_ventas' %}">Reportes</a></li>
                     </ul>
                 </li>
                 {% endif %}
@@ -64,7 +69,9 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                         aria-expanded="false">Bodeguero <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">Inventario</a></li>
+                        <li><a href="{% url 'lista_productos' %}">Productos</a></li>
+                        <li><a href="{% url 'lista_categorias' %}">Categorias</a></li>
+                        <li><a href="{% url 'lista_bodegas' %}">Bodegas</a></li>
                         <li><a href="#">Transferencias</a></li>
                     </ul>
                 </li>
@@ -88,7 +95,7 @@
 
                 <li><a class="navbar-link" href="/"><span class="glyphicon glyphicon-user">&nbsp;</span>
                         {{ user.email }}</a></li>
-                <li ><a class='navbar-link' href="{% url 'logout' %}">Salir</a></li>
+                <li><a class='navbar-link' href="{% url 'logout' %}">Salir</a></li>
 
                 {% else %}
 

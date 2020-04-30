@@ -1,5 +1,11 @@
 # Proyecto de Practicas Intermedias
 
+# IMPORTANTE
+Este proyecto depende de django-easy-print y weasyprint
+https://django-easy-pdf.readthedocs.io/en/v0.2.0-dev1/
+
+para realizar los reportes de facturas
+
 # Tareas faltantes 
 ## Para usuarios:
 - Recuperar contraseña *esto es extra*

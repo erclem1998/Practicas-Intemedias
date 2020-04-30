@@ -46,11 +46,11 @@ urlpatterns = [
     #ventas
     path('ventas', views.VentasList.as_view(), name='lista_ventas'),
     path('venta/crear', views.VentaCreate, name='crear_venta'),
+    path('venta/crearpdf/<int:pk>', views.PDFVentaDetail.as_view(), name='pdf_venta'),
     path('venta/ver/<int:pk>', views.VentaDetail.as_view(), name='detalle_venta'),
+    path('venta/reportes', views.reporte_ventas, name="reporte_ventas"),
     
     #inventario
     path('inventario/<int:pk>', views.InventarioUpdate.as_view(), name='modificar_inventario'),
-
-    #Otros URLS de vistas
 ]
 
