@@ -91,6 +91,10 @@ class UserAdmin(BaseUserAdmin):
         kwargs['labels'] = {'groups': 'roles'}
         return super().get_form(request, obj=obj, change=change, **kwargs)
 
+# El nuevo formulario de los logs inventario
+class LogsAdmin(admin.ModelAdmin):
+    list_display = ('fecha', 'usuario', 'producto', 'cantidad_vieja', 'cantidad_nueva', 'descripcion')
+    list_filter = ('fecha', 'usuario', 'producto')
 
 # Registrar modelos a mostrar en el admin
 
@@ -101,7 +105,7 @@ admin.site.register(Categoria)
 admin.site.register(Cliente)
 admin.site.register(Venta)
 admin.site.register(Factura)
-admin.site.register(LogActualizacionInventario)
+admin.site.register(LogActualizacionInventario, LogsAdmin)
 admin.site.register(Usuario, UserAdmin)
 admin.site.register(Permission)
 admin.site.register(BodegaProducto)

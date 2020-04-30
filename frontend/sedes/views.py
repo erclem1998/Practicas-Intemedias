@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, HttpResponseRedirect
-from django.template import loader
+from django.template import RequestContext, loader
 from .models import *
 
 from django.views.generic import ListView, DetailView
@@ -14,6 +14,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.forms import ModelForm
 
 from django.urls import reverse
+from django import forms
 
 import json
 from django.core.serializers.json import DjangoJSONEncoder
@@ -427,7 +428,42 @@ class VentasList(ListView):
     model = Venta
     template_name = 'ventas/ventas_list.html'
 
-# Crear cliente
+# ver una unica venta
+
+
+class VentaDetail(DetailView):
+    model = Venta
+    template_name = 'ventas/venta_detail.html'
+    var1 = "hola"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        venta = context['venta']
+        factura = []
+        print(venta.productoventa_set)
+
+        producto_ventas = ProductoVenta.objects.filter(venta= venta)
+
+        total_actual = 0
+        for pv in producto_ventas:
+            reglon_factura = {}
+            reglon_factura['producto'] = pv.producto
+            reglon_factura['cantidad'] = pv.cantidad
+            reglon_factura['subtotal'] = pv.cantidad * pv.producto.precio
+            total_actual += reglon_factura['subtotal']
+            reglon_factura['total'] = total_actual
+
+            factura.append(reglon_factura)
+
+        context['factura'] = factura
+        context['total'] = total_actual
+
+        context['total_recargo'] = total_actual * 1.1
+
+        return context
+
+# Crear venta
 
 
 def VentaCreate(request):
@@ -467,7 +503,6 @@ def VentaCreate(request):
         cliente = get_object_or_404(Cliente, dpi= cliente_id)
 
         vendedor = request.user
-        print(vendedor)
 
         fecha_facturacion = request.POST.get('fecha_facturacion')
         
@@ -491,6 +526,8 @@ def VentaCreate(request):
             fecha_entrega= fecha_entrega,
         )
 
+        venta.save()
+
         for producto in productos_agregados:
             data = producto.split('#_v_#')
             
@@ -507,7 +544,55 @@ def VentaCreate(request):
 
             prod_bodega.cantidad = prod_bodega.cantidad - cantidad
             prod_bodega.save()
-
-        venta.save()
+            if (cantidad != 0):
+                prodventa  = ProductoVenta(venta= venta, producto= producto, cantidad = cantidad)
+                prodventa.save()
 
         return HttpResponseRedirect(reverse('lista_ventas'))
+
+# Inventario
+
+class InventarioModelForm(ModelForm):
+    descripcion = forms.CharField(max_length= 500, required= True)
+
+    def __init__(self, *args, **kwargs):
+        super(InventarioModelForm, self).__init__(*args, **kwargs)
+
+        for field in self.fields:
+            self.fields[field].widget.attrs = {
+                'class': 'form-control'
+            }
+
+    class Meta:
+        model = BodegaProducto
+        fields = ['cantidad']
+
+# Modificar inventario
+
+class InventarioUpdate(UpdateView):
+    model = BodegaProducto
+    form_class = InventarioModelForm
+    template_name = 'inventario/inventario_form.html'
+
+    def form_valid(self, form):
+        
+        bp = self.object
+        descripcion = form.cleaned_data['descripcion']
+        cvieja = form.initial['cantidad']
+
+        log_inv = LogActualizacionInventario(
+            producto= bp.producto,
+            cantidad_nueva= float(form.cleaned_data['cantidad']),
+            cantidad_vieja= cvieja,
+            descripcion= descripcion,
+            usuario= self.request.user,
+        )
+
+        log_inv.save()
+
+        return super().form_valid(form)
+
+    # Redirigir al listado de productos
+    def get_success_url(self):
+        return reverse('detalle_bodega', args=[self.object.bodega.id])
+

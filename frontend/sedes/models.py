@@ -83,7 +83,10 @@ class Bodega(models.Model):
 class BodegaProducto(models.Model):
     bodega = models.ForeignKey('Bodega', on_delete= models.CASCADE)
     producto = models.ForeignKey('Producto', on_delete= models.CASCADE)
-    cantidad = models.IntegerField(verbose_name='Cantidad de productos en existencia', default= 0)
+    cantidad = models.IntegerField(verbose_name='Cantidad de productos en existencia', default= 0, 
+        validators=[
+            MinValueValidator(0)
+        ])
 
     def __str__(self):
         return "%s unidades de %s en %s" % (self.cantidad, self.producto, self.bodega)
@@ -173,8 +176,8 @@ class Factura(models.Model):
 class LogActualizacionInventario(models.Model):
     producto = models.ForeignKey(
         'Producto', on_delete=models.SET_NULL, null=True)
-    cantidad_nueva = models.DecimalField(decimal_places=2, max_digits=12)
-    cantidad_vieja = models.DecimalField(decimal_places=2, max_digits=12)
+    cantidad_nueva = models.IntegerField()
+    cantidad_vieja = models.IntegerField()
     descripcion = models.CharField(max_length=500)
     usuario = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)

@@ -13,8 +13,8 @@
 
 <h3>Productos en la bodega</h3>
 
-<table class="table table-striped">
-    <thead class="thead-dark">
+<table class="table table-striped table-hover thead-dark table-dark">
+    <thead class="">
         <tr>
             <th>SKU</th>
             <th>Codigo de Barras</th>
@@ -25,9 +25,9 @@
             <th>Cantidad disponible</th>
         </tr>
     </thead>
-    <tbody class="table-hover">
+    <tbody>
         {% for bp in object.bodegaproducto_set.all %}
-        <tr>
+        <tr {% if bp.cantidad == 0 %} class="danger"{%endif%}>
             <td><a href="{% url "detalle_producto"  bp.producto.id  %}">{{ bp.producto.sku }}</a></td>
             <td>{{ bp.producto.codigo_barras }}</td>
             <td>{{ bp.producto.nombre }}</td>
@@ -41,10 +41,10 @@
                 </ul>
             </td>
             <td>
-                <input type="step" class="form-control input-sm" step=1 value="{{ bp.cantidad }}" name="{{ bp.bodega.id }}_{{ bp.producto.id }}" min=0 />
+                {% if bp.cantidad == 0%} <span class="text-danger">{{bp.cantidad}} unidades</span>{% else %}<span class="text-success">{{ bp.cantidad }}</span> unidades {% endif %}
             </td>
             <td>
-                <a href="{% url "modificar_producto"  bp.producto.id  %}" class="btn btn-xs btn-warning"> <span class="glyphicon glyphicon-plus"></span> Modificar inventario</a>
+                <a href="{% url "modificar_inventario"  bp.id  %}" class="btn btn-xs btn-warning"> <span class="glyphicon glyphicon-plus"></span> Modificar inventario</a>
             </td>
         </tr>
 

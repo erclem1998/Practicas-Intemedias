@@ -3,14 +3,70 @@
 {% extends '../base.html' %}
 {% block body_block %}
 
-<h1>{{ object.alias }}</h1>
+<h2>Detalles de la venta</h2>
+<table class="table table-hover table-bordered">
+    <tr>
+      <th colspan="2">Venta #{{ object.id }}</th>
+    </tr>
+    <tr>
+      <td>Cliente</td>
+      <td><a href='{% url "lista_clientes" %}'>{{object.cliente}}</a>
+        </td>
+    </tr>
+    <tr>
+      <td>Vendedor</td>
+      <td><a href='{% url "ver_usuario" object.vendedor.dpi %}'>{{object.vendedor}}</a></td>
+    </tr>
+    <tr>
+      <td>Fecha Facturación</td>
+      <td>{{ object.fecha_facturacion }}</td>
+    </tr>
+    <tr>
+      <td>Tipo</td>
+      <td>{% if object.tipo == 'D' %}A domicilio{% else %}En el local{% endif %}</td>
+    </tr>
+    {% if object.repartidor %}
+    <tr>
+      <td>Repartidor</td>
+      <td><a href='{% url "ver_usuario" object.repartidor.dpi %}'>{{object.repartidor}}</a></td>
+    </tr>
+    {% endif %}
+    <tr>
+      <td>Fecha Entrega</td>
+      <td>{{ object.fecha_entrega }}</td>
+    </tr>
+    <tr>
+      <td>Estado de Entrega</td>
+      <td>{% if object.entregada %} Entregada {% else %} Pendiente {% endif %}</td>
+    </tr>
+  </table>
 
-<p>Direccion: {{object.direccion}}</p>
-<p>Departamento: {{object.departamento}}</p>
-<p>Municipio: {{object.municipio}}</p>
-<p>Encargado: <a href='{% url "ver_usuario" object.encargado.dpi %}'>{{ object.encargado.email }}</a></p>
-<p># de bodegas: {{object.numero_bodegas}}</p>
+<h2>Productos vendidos</h2>
 
-<!-- Por hacer: detalle de encargado y de bodegas -->
+<table class="table table-bordered table-hover table-stripped">
+    <tr>
+      <th>SKU</th>
+      <th>NOMBRE</th>
+      <th>PRECIO (Q)</th>
+      <th>CANTIDAD (Unidades)</th>
+      <th>SUBTOTAL (Q)</th>
+      <th>TOTAL ACUMULADO (Q)</th>
+    </tr>
+    {% for pv in factura %}
+    <tr>
+      <td>{{ pv.producto.sku }}</td>
+      <td>{{ pv.producto.nombre }}</td>
+      <td>{{ pv.producto.precio }}</td>
+      <td>{{ pv.cantidad }}</td>
+      <td>{{ pv.subtotal }}</td>
+      <td>{{ pv.total }}</td>
+    </tr>
+    {% endfor %}
+    
+    <tr>
+        <td colspan="5">Total</td>
+        <td>Q.{{ total }}</td>
+    </tr>
+  </table>
 
 {% endblock %}
