@@ -639,4 +639,31 @@ class InventarioUpdate(UpdateView):
 # REPORTES
 def reporte_ventas(request):
     context= {}
+
+    ventas = []
+
+    for venta_bd in Venta.objects.all():
+        total = 0
+        for pv in venta_bd.productoventa_set.all():
+            total += pv.producto.precio * pv.cantidad
+            
+        venta = { 
+            "id": venta_bd.id,
+            'vendedor': venta_bd.vendedor.dpi,
+            'total': total
+        }
+
+        ventas.append(venta)
+
+    repartidores = []
+
+    for repartidor in Usuario.objects.filter(groups__name='Repartidor'):
+        repartidores.append({
+            "nombre": repartidor.nombre,
+            "dpi": repartidor.dpi
+        })
+
+    context['ventas'] = json.dumps(list(ventas), cls=DjangoJSONEncoder),
+    context["vendedores"] = json.dumps(list(repartidores), cls=DjangoJSONEncoder);
+
     return render(request, 'reportes/reporte_venta.html', context)

@@ -1,46 +1,163 @@
-
 {% extends '../base.html' %}
 {% block body_block %}
 
-<canvas id="myChart" width="400" height="400"></canvas>
+<div class="row">
+    <div class="col-md-4">
+        <h3>Ventas Totales</h3>
+        <button id="ventastotales_btn" onclick="VentasTotales()" class="btn btn-success">Generar</button>
+    </div>
+
+    <div class="col-md-4">
+        <h3>Ventas por vendedor</h3>
+        <select id="vendedores_select" multiple=true class="form-control">
+
+        </select>
+        <p></p>
+        <button id="ventastotales_btn" onclick="VentasVendedores()" class="btn btn-primary">Generar</button>
+    </div>
+
+    <div class="col-md-4">
+        <h3>Seleccionar tipo de grafica</h3>
+        <select id="graphtype" class="form-control">
+            <option value="bar">Grafica de barra</option>
+            <option value="doughnut">Grafica de dona</option>
+            <option value="line">Grafica de lineas</option>
+        </select>
+    </div>
+</div>
+
+
+<hr>
+
+<canvas id="chart" width="300" height="300">
+
+</canvas>
 <script>
-var ctx = document.getElementById('myChart').getContext('2d');
-var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true
-                }
-            }]
+
+    let ventas_json = `{{ventas|safe}}`
+        .replace("(", "")
+        .replace(",)", "")
+        .replace("'", "")
+        .replace("'", "");
+
+    let ventas = JSON.parse(ventas_json);
+
+    let vendedores_json = `{{vendedores|safe}}`
+        .replace("(", "")
+        .replace(",)", "")
+        .replace("'", "")
+        .replace("'", "");
+
+
+    let vendedores = JSON.parse(vendedores_json);
+    console.log(vendedores);
+
+    function generarColores(tam) {
+        colores = [];
+        for (i = 0; i < tam; i++) {
+            colores.push(`rgba(${ Math.floor(Math.random() * 256)}, ${ Math.floor(Math.random() * 256)}, ${ Math.floor(Math.random() * 256)}, 0.1)`)
         }
+
+        return colores;
     }
-});
+
+    vendedores.forEach(rep => {
+        $('#vendedores_select').append($('<option>', {
+            value: rep.dpi,
+            text: rep.nombre + " " + rep.dpi,
+            style: "font-weight: bold"
+        }));
+    });
+
+    function VentasTotales() {
+
+        var seq = palette('tol-sq', 10);
+        let ventas_labels = [];
+        let ventas_totales = [];
+        ventas.forEach(venta => {
+            ventas_labels.push("Venta #" + venta.id);
+            ventas_totales.push(venta.total * 1);
+        });
+
+        console.log(ventas_labels);
+        console.log(ventas_totales);
+
+        var ctx = document.getElementById('chart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: $("#graphtype").val(),
+            data: {
+                labels: ventas_labels,
+                datasets: [{
+                    label: 'Total por venta',
+                    data: ventas_totales,
+                    borderWidth: 1,
+                    backgroundColor: generarColores(ventas_totales.length)
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+    }
+
+    function VentasVendedores() {
+        let seleccionados = $("#vendedores_select").val();
+
+        let vendedores_labels = []
+        seleccionados.forEach(s => {
+            vendedores_labels.push(s);
+        });
+
+        let totales_vendedor = []
+
+        seleccionados.forEach(s => {
+            total = 0;
+            ventas.forEach(v => {
+                if (v.vendedor == s) {
+                    total += v.total * 1;
+                }
+            })
+
+            totales_vendedor.push(total);
+        });
+
+        console.log(vendedores_labels);
+        console.log(totales_vendedor);
+
+        var ctx = document.getElementById('chart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: $("#graphtype").val(),
+            data: {
+                labels: vendedores_labels,
+                datasets: [{
+                    label: 'Total por vendedor',
+                    data: totales_vendedor,
+                    borderWidth: 1,
+                    backgroundColor: generarColores(totales_vendedor.length)
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+
+
+    }
+
+    
+
 </script>
 
 {% endblock %}
